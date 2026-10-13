@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ES2020",
+    "moduleResolution": "bundler",
+    "outDir": "scripts",
+    "rootDir": "src",
+    "strict": true,
+    "lib": ["ES2020", "DOM"],
+    "types": [
+      "@minecraft/server",
+      "@minecraft/server-ui",
+      "@minecraft/server-admin",
+      "@minecraft/server-net"
+    ],
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "noImplicitAny": true
+  },
+  "include": ["src/**/*.ts"]
+}

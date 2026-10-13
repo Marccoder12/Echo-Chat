@@ -1,0 +1,23 @@
+{
+  "format_version": 2,
+  "header": {
+    "description": "",
+    "name": "Echo Chat",
+    "uuid": "37afe769-0754-437e-a1c5-6b6e8438d722",
+    "min_engine_version": [1, 21, 0],
+    "version": [1, 0, 0]
+  },
+  "modules": [
+    {
+      "type": "resources",
+      "uuid": "2aa70f4e-de98-4929-b931-3fe1dbdaa416",
+      "version": [1, 0, 0]
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "cdaffaa6-c22c-42ff-88fe-79b6314b0efe",
+      "version": [1, 0, 0]
+    }
+  ]
+}

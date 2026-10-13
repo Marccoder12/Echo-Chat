@@ -1,0 +1,38 @@
+{
+  "format_version": 2,
+  "header": {
+    "description": "",
+    "name": "Echo Chat",
+    "uuid": "cdaffaa6-c22c-42ff-88fe-79b6314b0efe",
+    "min_engine_version": [1, 21, 0],
+    "version": [1, 0, 0]
+  },
+  "modules": [
+    {
+      "type": "data",
+      "uuid": "ad7609b1-0499-4a4a-9c11-ae9cfad2e66c",
+      "version": [1, 0, 0]
+    },
+    {
+      "type": "script",
+      "entry": "scripts/main.js",
+      "language": "Javascript",
+      "uuid": "36980395-c2a1-47a6-8080-83122a9e694e",
+      "version": [1, 0, 0]
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "37afe769-0754-437e-a1c5-6b6e8438d722",
+      "version": [1, 0, 0]
+    },
+    {
+      "module_name": "@minecraft/server",
+      "version": "3.0.0-alpha"
+    },
+    {
+      "module_name": "@minecraft/server-ui",
+      "version": "3.0.0-alpha"
+    }
+  ]
+}

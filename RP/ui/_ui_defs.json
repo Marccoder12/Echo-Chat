@@ -1,0 +1,8 @@
+{
+  // Alphabetical order please :)
+  "ui_defs": [
+    "ui/echo_chat_ui/echo_chat_screen.json",
+    "ui/echo_chat_ui/Pages/echo_chat_list_screen.json",
+    "ui/echo_chat_ui/Pages/echo_chat_view_screen.json"
+  ]
+}

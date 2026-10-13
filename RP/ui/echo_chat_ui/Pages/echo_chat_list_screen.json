@@ -1,0 +1,315 @@
+{
+  "namespace": "echo_chat_list",
+  "echo_chat_list_panel": {
+    "type": "panel",
+    "size": [445, 250],
+    "controls": [
+      // title
+      {
+        "chat_list_title": {
+          "type": "label",
+          "text": "Chat List",
+          "anchor_from": "top_middle",
+          "anchor_to": "top_middle",
+          "offset": ["50% - 30px", 0],
+          "font_size": "large",
+          "font_type": "MinecraftTen",
+          "size": ["100%", 20],
+          "color": [1, 1, 1],
+          "layer": 2
+        }
+      },
+      //background image
+      {
+        "background": {
+          "type": "image",
+          "texture": "textures/ui/Black",
+          "size": ["100%", "100%"],
+          "alpha": 0.6
+        }
+      },
+      //close btn
+      {
+        "close_button_holder": {
+          "type": "panel",
+          "controls": [
+            {
+              "close@common.close_button": {
+                "layer": 2,
+                "offset": [0, 0]
+              }
+            }
+          ],
+          "bindings": [
+            {
+              "binding_name": "#close_button_visible",
+              "binding_name_override": "#visible"
+            }
+          ]
+        }
+      },
+      // chat button list panel
+      {
+        "chat_btns_panel": {
+          "type": "panel",
+
+          "controls": [
+            {
+              "panel_bg": {
+                "type": "image",
+                "anchor_from": "top_left",
+                "anchor_to": "top_left",
+                "texture": "textures/ui/Black",
+                "alpha": 0.3,
+                "size": ["50% + 2px", "86%"],
+                "offset": [12, "10%"],
+                "controls": [
+                  {
+                    "echo_chat_list_scroll_panel": {
+                      "type": "stack_panel",
+                      "size": ["100%", "100%"],
+
+                      "offset": [2, 2],
+                      "orientation": "vertical",
+                      "anchor_from": "top_left",
+                      "anchor_to": "top_left",
+                      "layer": 1,
+                      "controls": [
+                        {
+                          "scrolling_panel@common.scrolling_panel": {
+                            "type": "panel",
+                            "anchor_to": "top_left",
+                            "anchor_from": "top_left",
+                            "$show_background": false,
+                            "size": ["100%", "100%"],
+                            "$scrolling_content": "echo_chat_list.echo_chat_list_scrolling_content",
+                            "$scroll_size": [5, "100% - 4px"],
+                            "$scrolling_pane_size": [
+                              "100% - 4px",
+                              "100% - 2px"
+                            ],
+                            "$scrolling_pane_offset": [2, 0],
+                            "$scroll_bar_right_padding_size": [0, 0]
+                            // "$jump_to_bottom_on_update": true
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      // echo Logo Icon
+      {
+        "echo_logo": {
+          "type": "image",
+          "offset": [-10, 0],
+          "texture": "textures/ui/echo_chat_icon2",
+          "anchor_from": "top_right",
+          "anchor_to": "top_right",
+          "alpha": 0.6,
+          "layer": 2,
+
+          "size": ["45% - 10px", "100%"]
+        }
+      }
+    ]
+  },
+  "echo_chat_list_scrolling_content": {
+    "type": "stack_panel",
+    "size": ["100% - 4px", "100%c"],
+    "orientation": "vertical",
+    "anchor_from": "top_left",
+    "anchor_to": "top_left",
+
+    "controls": [
+      {
+        "padding": {
+          "type": "panel",
+          "size": ["100%", 4]
+        }
+      },
+      {
+        "wrapping_panel": {
+          "type": "panel",
+          "size": ["100%", "100%c"],
+          "controls": [
+            {
+              "long_form_dynamic_buttons_panel@echo_chat_list.long_form_dynamic_buttons_panel": {}
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "long_form_dynamic_buttons_panel": {
+    "type": "stack_panel",
+    "size": ["100%", "100%c + 10px"],
+
+    "offset": [2, 2],
+    "orientation": "vertical",
+    "anchor_from": "top_middle",
+    "anchor_to": "top_middle",
+    "factory": {
+      "name": "buttons",
+      "control_ids": {
+        "button": "@echo_chat_list.echo_chat_padded_button",
+        "label": "@server_form.dynamic_label"
+      }
+    },
+
+    "collection_name": "form_buttons",
+    "bindings": [
+      {
+        "binding_name": "#form_button_contents",
+        "binding_name_override": "#collection_length"
+      },
+      {
+        "binding_type": "collection",
+        "binding_collection_name": "form_buttons",
+        "binding_name": "#collection_index"
+      }
+    ],
+    "visible": "(#collection_index = 0)"
+  },
+
+  "echo_chat_padded_button": {
+    "type": "panel",
+    "size": ["100% - 2px", 42],
+    "controls": [
+      {
+        "echo_chat_btn@echo_chat_list.echo_chat_button": {}
+      }
+    ]
+  },
+  "echo_chat_button": {
+    "type": "panel",
+    "size": ["90%", "90%"],
+    "controls": [
+      {
+        "panel_name": {
+          "type": "panel",
+          "anchor_from": "left_middle",
+          "anchor_to": "left_middle",
+          "offset": [4, 0],
+          "size": [34, "100%c"],
+          "bindings": [
+            {
+              "binding_type": "view",
+              "source_control_name": "image",
+              "resolve_sibling_scope": true,
+              "source_property_name": "(not (#texture = ''))",
+              "target_property_name": "#visible"
+            }
+          ],
+
+          "controls": [
+            {
+              "image": {
+                "type": "image",
+                "layer": 50,
+                "size": [32, 32],
+                "offset": [0, 0],
+                "bindings": [
+                  {
+                    "binding_name": "#form_button_texture",
+                    "binding_name_override": "#texture",
+                    "binding_type": "collection",
+                    "binding_collection_name": "form_buttons"
+                  },
+                  {
+                    "binding_name": "#form_button_texture_file_system",
+                    "binding_name_override": "#texture_file_system",
+                    "binding_type": "collection",
+                    "binding_collection_name": "form_buttons"
+                  },
+                  {
+                    "binding_type": "view",
+                    "source_property_name": "(not ((#texture = '') or (#texture = 'loading')))",
+                    "target_property_name": "#visible"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        "form_button@common_buttons.light_text_button": {
+          "$pressed_button_name": "button.form_button_click",
+          "anchor_from": "top_left",
+          "anchor_to": "top_left",
+          "size": ["100%", "100%"],
+          // "$button_text": "#form_button_text",
+          "$button_text_binding_type": "collection",
+          "$button_text_grid_collection_name": "form_buttons",
+          "$button_text_max_size": ["100%", 20],
+          "bindings": [
+            {
+              "binding_type": "collection_details",
+              "binding_collection_name": "form_buttons"
+            }
+          ]
+        }
+      },
+      {
+        "echo_chat_btn_label_panel": {
+          "type": "panel",
+          "anchor_from": "top_left",
+          "anchor_to": "top_left",
+          "size": ["100%", "100%"],
+          "layer": 51,
+          "controls": [
+            {
+              "bg": {
+                "type": "panel",
+                "anchor_from": "left_middle",
+                "anchor_to": "left_middle",
+                "alpha": 0.3,
+                "offset": ["21%", 0],
+                "size": ["76% + 2px", "100%"],
+                "clips_children": true,
+                "controls": [
+                  {
+                    "echo_chat_btn_label": {
+                      "type": "label",
+                      "anchor_from": "left_middle",
+                      "anchor_to": "left_middle",
+                      "layer": 52,
+                      "text_alignment": "left",
+                      "offset": [5, 0],
+                      "color": [0.2, 0.2, 0.2],
+                      "font_size": "medium",
+                      "text": "#form_button_text",
+                      "bindings": [
+                        {
+                          "binding_name": "#form_button_text",
+                          "binding_type": "collection",
+                          "binding_collection_name": "form_buttons"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+
+  "echo_chat_def_label@settings_common.option_group_spaced_label": {
+    "$text": "#form_button_text",
+    "$text_bindings": [
+      {
+        "binding_name": "#form_button_text",
+        "binding_type": "collection",
+        "binding_collection_name": "form_buttons"
+      }
+    ]
+  }
+}

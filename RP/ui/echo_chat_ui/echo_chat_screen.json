@@ -1,0 +1,90 @@
+{
+  "namespace": "echo_chat",
+
+  "main_long_form_panel": {
+    "type": "panel",
+    "bindings": [
+      {
+        "binding_name": "#title_text"
+      }
+    ],
+    "controls": [
+      // You can reference your forms here but for now we will use an image of an apple as an example
+      {
+        "our_custom_long_made_form": {
+          "size": [445, 245],
+          "type": "panel",
+          "alpha": 0.4,
+          "$long_title_needs_to_contain": "echo:", // what the action form title needs to contain in order for this apple to show
+          "bindings": [
+            {
+              "binding_type": "view",
+              "source_control_name": "main_long_form_panel",
+              "source_property_name": "(not((#title_text - $long_title_needs_to_contain) = #title_text))",
+              "target_property_name": "#visible"
+            }
+          ],
+          "controls": [
+            // add your individual forms with their respective name checks
+            {
+              "chat_list_panel@echo_chat_list.echo_chat_list_panel": {
+                "bindings": [
+                  {
+                    "binding_type": "view",
+                    "source_control_name": "main_long_form_panel",
+                    "source_property_name": "'echo:ChatList' = #title_text",
+                    "target_property_name": "#visible"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "main_custom_form_panel": {
+    "type": "panel",
+    "size": ["100%", "100%"],
+    "bindings": [
+      {
+        "binding_name": "#title_text"
+      }
+    ],
+    "controls": [
+      // You can reference your forms here but for now we will use an image of an apple as an example
+      {
+        "our_custom_made_custom_form": {
+          "size": [445, 245],
+          "type": "panel",
+          "alpha": 0.4,
+          "$custom_title_needs_to_contain": "echo:", // what the action form title needs to contain in order for this apple to show
+          "bindings": [
+            {
+              "binding_type": "view",
+              "source_control_name": "main_custom_form_panel",
+              "source_property_name": "(not((#title_text - $custom_title_needs_to_contain) = #title_text))",
+              "target_property_name": "#visible"
+            }
+          ],
+          "controls": [
+            // add your individual forms with their respective name checks
+            {
+              "echo_chat_view_panel@echo_chat_view.echo_chat_view_panel": {
+                "always_accepts_input": true,
+                "bindings": [
+                  {
+                    "binding_type": "view",
+                    "source_control_name": "main_custom_form_panel",
+                    "source_property_name": "'echo:ChatView' = #title_text",
+                    "target_property_name": "#visible"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

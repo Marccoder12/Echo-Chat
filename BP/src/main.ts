@@ -37,24 +37,30 @@ world.beforeEvents.playerInteractWithEntity.subscribe(data => {
 world.beforeEvents.chatSend.subscribe(data => {
     const msg = data.message;
     const player = data.sender;
-    let outputName : string ="";
-    if(data.cancel) return;
-
-    if(msg.startsWith("!invite")){
+    let outputName : string = "";
+    if (data.cancel)
+        return;
+    if (msg.startsWith("!invite")) {
         outputName = msg.split(" ")[1];
         console.warn("InvitedPlayer: ", outputName);
         let hash = db.generateChatHash([player.name, outputName]);
         console.warn("Hash: ", hash);
         db.tryStoreChatHash(hash);
         db.setInvitedPlayer(player, outputName);
+        console.warn("INVITED PLAYERS: ", db.getInvitedPlayers(player));
         console.warn(JSON.stringify(db.getChatHashes()));
         return;
     }
+
+    // save player chats and data
+    if (msg.startsWith("!save")) {
+        db.saveChatHistory();
+    }
     
-    if(msg.startsWith("!clchat")){
+        if (msg.startsWith("!clchat")) {
         db.resetHashes();
         console.warn(JSON.stringify(db.getChatHashes()));
-        db.setPlayerConfig(player, {chat_hash: "", current_menu: 0, invitedPlayers: []});
+        db.setPlayerConfig(player, { chat_hash: "", current_menu: 0, invitedPlayers: [] });
         console.warn(JSON.stringify(db.getPlayerConfig(player)));
     }
 })
@@ -64,7 +70,6 @@ world.afterEvents.playerSpawn.subscribe((data) => {
     const init = data.initialSpawn;
 
     if(init){
-        db.getCachedPlayersChats(player);
     }    
 })
 
@@ -72,5 +77,25 @@ world.afterEvents.playerSpawn.subscribe((data) => {
 world.beforeEvents.playerLeave.subscribe((data) => {
     const player = data.player;
     console.warn("Caching Player Chats");
-    db.cachePlayersChats(player, db.getPlayerConfig(player).invitedPlayers);
+    db.saveChatHistory();
+})
+
+world.afterEvents.worldLoad.subscribe(data => {
+   db.cacheChatHistory(); 
+});
+
+system.beforeEvents.startup.subscribe(ev => {
+    let echo_chat_init : boolean = world.getDynamicProperty("echo_chat:init") as boolean ?? false;
+    if(echo_chat_init === undefined || echo_chat_init === false){
+        console.warn("ECHO CHAT INIT:", echo_chat_init);
+        //Setup
+
+        world.setDynamicProperty("echo_chat:init", true);
+    }
+    console.warn("ECHO CHAT INIT:", echo_chat_init);
+
+})
+
+system.beforeEvents.shutdown.subscribe(ev => {
+    db.saveChatHistory();
 })

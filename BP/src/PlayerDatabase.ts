@@ -1,11 +1,6 @@
 import { Player, world } from "@minecraft/server"
 import { PlayerConfig, ChatMessage } from "./types"
-import { hash } from "better-auth"
-export type ChatHash = {
-    hash : string
-}
 
-export let chatHashes : ChatHash[] = [{hash: "9fcdb1fe-60a8-4de0-9cd8-66b7a6c45830"}]
 let people : string[] = [];
 
 
@@ -57,6 +52,12 @@ export function getAllPlayers() : string []{
 export function setInvitedPlayer(player : Player, invite : string){
         const existing: PlayerConfig = getPlayerConfig(player);
         const existingPlayers : string[] = existing.invitedPlayers;
+        for(let i = 0; i < existingPlayers.length; i++){
+            if(existingPlayers[i] === invite){
+               console.warn("Invited this friend already!");
+            return;   
+            }
+        }
         existingPlayers.push(invite);
     setPlayerConfig(player, {invitedPlayers: existingPlayers});
 
@@ -68,7 +69,18 @@ export function getInvitedPlayers(player : Player) : string []{
 }
 //Chat Data functions
 export function getChatHashes() : string[]{
-    return JSON.parse(world.getDynamicProperty("echo:all_chat_hashes") as string);
+    const raw = world.getDynamicProperty("echo:all_chat_hashes");
+    if(!raw || typeof(raw) !== "string"){
+        world.setDynamicProperty("echo:all_chat_hashes", JSON.stringify([]));
+        return [];
+    }
+    try {
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+    } catch {
+        console.warn("[Echo Chats] Invalid chat hashes data.");
+        return [];
+    }
 }
 export function tryStoreChatHash(chatHash: string){
     const hashes : string[] = getChatHashes();
@@ -117,29 +129,13 @@ export function setInChatHistory(chatHash : string, message : ChatMessage){
     chatHistory.set(chatHash, existing);
 }
 
-export function cachePlayersChats(player: Player, people: string[]){
-    let chatMap : Map<string, ChatMessage[]> = new Map();
 
-    let config = getPlayerConfig(player);
-    findChatHash(config.invitedPlayers);
-    config.invitedPlayers.forEach(p => {
-        let temp_hash = findChatHash([...people, player.name]);
-        let chatMessages : ChatMessage[] = getChatHistory(temp_hash);
-
-        chatMap.set(temp_hash, chatMessages);
-    })
-    setPlayerConfig(player, {cache: chatMap});
+export function cacheChatHistory(){
+    const raw = world.getDynamicProperty("echo_chat:chat_history");
+    chatHistory = new Map<string, ChatMessage[]>(typeof raw === "string" ? JSON.parse(raw) : []);
+    console.warn("CHAT HISTORY: ",raw);
 }
-export function getCachedPlayersChats(player: Player){
-    const hashes = getChatHashes();
-    let config : PlayerConfig = getPlayerConfig(player);
-    hashes.forEach(hash => {
-        if(config.cache.has(hash)){
-            if(getChatHistory(hash)[getChatHistory(hash).length - 1].index <= config.cache.get(hash)[config.cache.get(hash).length].index ){
-                chatHistory.set(hash, config.cache.get(hash) ?? []);
-            }
-        }
-    })
-
-    config.cache.clear();
+export function saveChatHistory(){
+    world.setDynamicProperty("echo_chat:chat_history", JSON.stringify(Array.from(chatHistory.entries())));
+    console.warn(chatHistory);
 }

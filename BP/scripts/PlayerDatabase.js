@@ -1,5 +1,4 @@
 import { world } from "@minecraft/server";
-export let chatHashes = [{ hash: "9fcdb1fe-60a8-4de0-9cd8-66b7a6c45830" }];
 let people = [];
 export let chatHistory = new Map();
 export const generateChatHash = (people) => {
@@ -20,18 +19,15 @@ export const generateChatHash = (people) => {
 };
 //configuraton
 export const getPlayerConfig = (player) => {
-    const raw = player.getDynamicProperty("echo:player_config") ;
+    const raw = player.getDynamicProperty("echo:player_config");
     if (!raw) {
         // return sensible default defaults if nothing is saved
-        return { current_menu: 0, chat_hash: "", invitedPlayers: [] };
+        return { current_menu: 0, chat_hash: "" };
     }
     return JSON.parse(raw);
 };
 export const setPlayerConfig = (player, config) => {
     const existing = getPlayerConfig(player);
-    if(!existing){
-        player.setDynamicProperty("echo:player_config", JSON.stringify({ current_menu: 0, chat_hash: "", invitedPlayers: []}));
-    }
     const updated = { ...existing, ...config };
     player.setDynamicProperty("echo:player_config", JSON.stringify(updated));
 };
@@ -47,8 +43,12 @@ export function getAllPlayers() {
 export function setInvitedPlayer(player, invite) {
     const existing = getPlayerConfig(player);
     const existingPlayers = existing.invitedPlayers;
-    console.warn(JSON.stringify(existing));
-    console.warn(JSON.stringify(existingPlayers));
+    for (let i = 0; i < existingPlayers.length; i++) {
+        if (existingPlayers[i] === invite) {
+            console.warn("Invited this friend already!");
+            return;
+        }
+    }
     existingPlayers.push(invite);
     setPlayerConfig(player, { invitedPlayers: existingPlayers });
 }
@@ -58,13 +58,22 @@ export function getInvitedPlayers(player) {
 }
 //Chat Data functions
 export function getChatHashes() {
-    return JSON.parse(world.getDynamicProperty("echo:all_chat_hashes"));
+    const raw = world.getDynamicProperty("echo:all_chat_hashes");
+    if (!raw || typeof (raw) !== "string") {
+        world.setDynamicProperty("echo:all_chat_hashes", JSON.stringify([]));
+        return [];
+    }
+    try {
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+    }
+    catch {
+        console.warn("[Echo Chats] Invalid chat hashes data.");
+        return [];
+    }
 }
 export function tryStoreChatHash(chatHash) {
-    const hashes = getChatHashes() ?? [];
-    if(!hashes){
-        world.setDynamicProperty("echo:all_chat_hashes", JSON.stringify([]));
-    }
+    const hashes = getChatHashes();
     for (let i = 0; i < hashes.length; i++) {
         if (hashes[i] === chatHash) {
             console.warn("Invited this friend already!");
@@ -98,4 +107,13 @@ export function setInChatHistory(chatHash, message) {
     const existing = getChatHistory(chatHash);
     existing.push(message);
     chatHistory.set(chatHash, existing);
+}
+export function cacheChatHistory() {
+    const raw = world.getDynamicProperty("echo_chat:chat_history");
+    chatHistory = new Map(typeof raw === "string" ? JSON.parse(raw) : []);
+    console.warn("CHAT HISTORY: ", raw);
+}
+export function saveChatHistory() {
+    world.setDynamicProperty("echo_chat:chat_history", JSON.stringify(Array.from(chatHistory.entries())));
+    console.warn(chatHistory);
 }

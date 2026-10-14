@@ -6,8 +6,9 @@ export function ShowChatList(player) {
     const chatListForm = new ActionFormData()
         .title("echo:ChatList");
     const people = db.getInvitedPlayers(player);
-    if(!people || people.length === 0){
+    if (!people || people.length === 0) {
         player.sendMessage("No chats. Invite someone to chat using !invite name");
+        return;
     }
     people.forEach(person => {
         if (player.name != person) {

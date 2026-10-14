@@ -1,4 +1,4 @@
-import { world } from "@minecraft/server";
+import { world, system } from "@minecraft/server";
 import { buildChatViewForm } from "./ChatView";
 import { ShowChatList } from "./ChatList";
 import * as db from "./PlayerDatabase";
@@ -40,8 +40,13 @@ world.beforeEvents.chatSend.subscribe(data => {
         console.warn("Hash: ", hash);
         db.tryStoreChatHash(hash);
         db.setInvitedPlayer(player, outputName);
+        console.warn("INVITED PLAYERS: ", db.getInvitedPlayers(player));
         console.warn(JSON.stringify(db.getChatHashes()));
         return;
+    }
+    // save player chats and data
+    if (msg.startsWith("!save")) {
+        db.saveChatHistory();
     }
     if (msg.startsWith("!clchat")) {
         db.resetHashes();
@@ -55,4 +60,24 @@ world.afterEvents.playerSpawn.subscribe((data) => {
     const init = data.initialSpawn;
     if (init) {
     }
+});
+world.beforeEvents.playerLeave.subscribe((data) => {
+    const player = data.player;
+    console.warn("Caching Player Chats");
+    db.saveChatHistory();
+});
+world.afterEvents.worldLoad.subscribe(data => {
+    db.cacheChatHistory();
+});
+system.beforeEvents.startup.subscribe(ev => {
+    let echo_chat_init = world.getDynamicProperty("echo_chat:init") ?? false;
+    if (echo_chat_init === undefined || echo_chat_init === false) {
+        console.warn("ECHO CHAT INIT:", echo_chat_init);
+        //Setup
+        world.setDynamicProperty("echo_chat:init", true);
+    }
+    console.warn("ECHO CHAT INIT:", echo_chat_init);
+});
+system.beforeEvents.shutdown.subscribe(ev => {
+    db.saveChatHistory();
 });
